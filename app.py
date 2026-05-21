@@ -88,6 +88,7 @@ def login():
             "SELECT * FROM users WHERE username = ? AND password = ?", (username, password)
         ).fetchone()
         conn.close()
+        #commentaar
 
         if user:
             session["user"] = username
