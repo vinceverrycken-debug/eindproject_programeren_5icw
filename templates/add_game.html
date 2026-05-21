@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Game toevoegen</h2>
+    <form method="POST">
+        <label>Titel *</label>
+<select name="title" required>
+    <option value="">-- Kies een game --</option>
+    {% for game in alle_games %}
+        <option value="{{ game['name'] }}">{{ game['name'] }}</option>
+    {% endfor %}
+</select>
+
+        <label>Genre</label>
+        <select name="genre">
+            <option value="actiegames">actiegames</option>
+            <option value="avonturengames">avonturengames</option>
+            <option value="role-playing games">role-playing games</option>
+            <option value="sportgames">sportgames</option>
+            <option value="horrorgames">horrorgames</option>
+            <option value="racinggames">racinggames</option>
+        </select>
+
+        <label>Platform</label>
+        <select name="platform">
+            <option value="PS5">PS5</option>
+            <option value="PS4">PS4</option>
+            <option value="PC">PC</option>
+            <option value="switch">switch</option>
+            <option value="XBOX">XBOX</option>
+            <option value="mobile">mobile</option>
+        </select>
+
+        <label>Status</label>
+        <select name="status">
+            <option value="wil spelen">Wil spelen</option>
+            <option value="bezig">Bezig</option>
+            <option value="gespeeld">Gespeeld</option>
+        </select>
+
+        <button type="submit">Toevoegen</button>
+        <a href="{{ url_for('index') }}">Annuleren</a>
+    </form>
+</div>
+
+<script>
+    const search = document.getElementById("search");
+    const suggestions = document.getElementById("suggestions");
+    const titleInput = document.getElementById("title");
+
+    search.addEventListener("input", async () => {
+        const q = search.value.trim();
+        if (q.length < 2) { suggestions.innerHTML = ""; return; }
+
+        const res = await fetch(`/search_games?q=${encodeURIComponent(q)}`);
+        const games = await res.json();
+
+        suggestions.innerHTML = games.map(name =>
+            `<li onclick="selectGame('${name.replace(/'/g, "\\'")}')">${name}</li>`
+        ).join("");
+    });
+
+    function selectGame(name) {
+        search.value = name;
+        titleInput.value = name;
+        suggestions.innerHTML = "";
+    }
+</script>
+{% endblock %}

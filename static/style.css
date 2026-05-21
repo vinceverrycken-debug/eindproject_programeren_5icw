@@ -1,0 +1,132 @@
+/* === Variables === */
+:root {
+    --bg:     #0d0f14;
+    --box:    #13161e;
+    --box2:   #1a1e2a;
+    --border: #2a2f45;
+    --text:   #d0d8f0;
+    --gray:   #6b7499;
+    --blue:   #00e5ff;
+    --green:  #00ffaa;
+    --red:    #ff4466;
+}
+
+/* === Reset === */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* === Base === */
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+}
+
+a {
+    color: var(--blue);
+    text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+/* === Nav === */
+nav {
+    height: 60px;
+    background: var(--box);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    color: var(--blue);
+}
+
+.menu {
+    display: flex;
+    gap: 10px;
+}
+
+.menu a {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+}
+.menu a:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    text-decoration: none;
+}
+
+/* === Main content === */
+main {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+h1, h2 {
+    font-family: 'Rajdhani', sans-serif;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+h1 { color: var(--blue); }
+
+/* === Alerts === */
+.alert {
+    padding: 12px;
+    border-left: 4px solid;
+    margin-bottom: 15px;
+}
+.success { color: var(--green); border-color: var(--green); }
+.error   { color: var(--red);   border-color: var(--red);   }
+.info    { color: var(--blue);  border-color: var(--blue);  }
+
+/* === Form === */
+.form {
+    max-width: 450px;
+    margin: auto;
+    padding: 25px;
+    background: var(--box);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 5px;
+    color: var(--gray);
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    background: var(--box2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+}
+input:focus, select:focus {
+    border-color: var(--blue);
+    outline: none;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: var(--blue);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+}
+button:hover { opacity: 0.8; }

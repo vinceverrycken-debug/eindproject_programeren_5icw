@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Game bewerken</h2>
+    <form method="POST">
+        <label>Titel *</label>
+        <input type="text" name="title" value="{{ game.title }}" required>
+
+        <label>Genre</label>
+        <input type="text" name="genre" value="{{ game.genre or '' }}">
+
+        <label>Platform</label>
+        <input type="text" name="platform" value="{{ game.platform or '' }}">
+
+        <label>Status</label>
+        <select name="status">
+            <option value="wil spelen" {% if game.status == "wil spelen" %}selected{% endif %}>Wil spelen</option>
+            <option value="bezig" {% if game.status == "bezig" %}selected{% endif %}>Bezig</option>
+            <option value="gespeeld" {% if game.status == "gespeeld" %}selected{% endif %}>Gespeeld</option>
+        </select>
+
+        <button type="submit">Opslaan</button>
+        <a href="{{ url_for('index') }}">Annuleren</a>
+    </form>
+</div>
+{% endblock %}
