@@ -9,11 +9,12 @@
 <body>
 
     <nav>
-        <a href="{{ url_for('index') }}"> Game Wishlist</a>
-        <div>
+        <a href="{{ url_for('index') }}" class="logo">Game Wishlist</a>
+        <div class="menu">
             {% if session.user %}
-                <span>Hallo, {{ session.user }}!</span>
+                <span style="color:var(--gray); padding: 8px 4px;">{{ session.user }}</span>
                 <a href="{{ url_for('add_game') }}">+ Toevoegen</a>
+                <a href="{{ url_for('reviews') }}">Reviews</a>
                 <a href="{{ url_for('logout') }}">Uitloggen</a>
             {% else %}
                 <a href="{{ url_for('login') }}">Inloggen</a>

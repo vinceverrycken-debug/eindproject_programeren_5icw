@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS game_platform (
     FOREIGN KEY (game_id) REFERENCES game(id),
     FOREIGN KEY (platform_id) REFERENCES platform(id)
 );
+    
 """)
 
 # Platforms invoegen

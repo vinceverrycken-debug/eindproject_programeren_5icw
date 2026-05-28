@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1> Game Wishlist</h1>
+<h1>Game Wishlist</h1>
 
 {% if games %}
     <table>
@@ -11,6 +11,7 @@
                 <th>Genre</th>
                 <th>Platform</th>
                 <th>Status</th>
+                <th>Rating</th>
                 <th>Toegevoegd door</th>
                 <th>Acties</th>
             </tr>
@@ -21,11 +22,30 @@
                 <td>{{ game.title }}</td>
                 <td>{{ game.genre or "-" }}</td>
                 <td>{{ game.platform or "-" }}</td>
-                <td>{{ game.status }}</td>
+                <td>
+                    {% if game.status == "wil spelen" %}
+                        <span class="status status-wil">Wil spelen</span>
+                    {% elif game.status == "bezig" %}
+                        <span class="status status-bezig">Bezig</span>
+                    {% else %}
+                        <span class="status status-gespeeld">Gespeeld</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if game.user_rating %}
+                        <span class="rating">{{ game.user_rating }} / 5</span>
+                    {% else %}
+                        <span style="color:var(--gray)">-</span>
+                    {% endif %}
+                </td>
                 <td>{{ game.added_by }}</td>
                 <td>
-                    <a href="{{ url_for('edit_game', game_id=game.id) }}">Bewerken</a>
-                    <a href="{{ url_for('delete_game', game_id=game.id) }}" onclick="return confirm('Zeker verwijderen?')">Verwijderen</a>
+                    {% if game.added_by == current_user %}
+                        <a href="{{ url_for('edit_game', game_id=game.id) }}">Bewerken</a>
+                        <a href="{{ url_for('delete_game', game_id=game.id) }}" onclick="return confirm('Zeker verwijderen?')">Verwijderen</a>
+                    {% else %}
+                        <span style="color:var(--gray); font-size:13px;">—</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

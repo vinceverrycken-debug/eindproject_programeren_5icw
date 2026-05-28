@@ -5,13 +5,27 @@
     <h2>Game bewerken</h2>
     <form method="POST">
         <label>Titel *</label>
-        <input type="text" name="title" value="{{ game.title }}" required>
+        <select name="title" id="titleSelect" required>
+            <option value="">-- Kies een game --</option>
+            {% for g in alle_games %}
+                <option value="{{ g['name'] }}" {% if g['name'] == game.title %}selected{% endif %}>{{ g['name'] }}</option>
+            {% endfor %}
+        </select>
 
         <label>Genre</label>
-        <input type="text" name="genre" value="{{ game.genre or '' }}">
+        <select name="genre" id="genreSelect">
+            <option value="{{ game.genre }}">{{ game.genre or '-- Kies eerst een game --' }}</option>
+        </select>
 
         <label>Platform</label>
-        <input type="text" name="platform" value="{{ game.platform or '' }}">
+        <select name="platform">
+            <option value="PS5" {% if game.platform == "PS5" %}selected{% endif %}>PS5</option>
+            <option value="PS4" {% if game.platform == "PS4" %}selected{% endif %}>PS4</option>
+            <option value="PC" {% if game.platform == "PC" %}selected{% endif %}>PC</option>
+            <option value="switch" {% if game.platform == "switch" %}selected{% endif %}>Switch</option>
+            <option value="XBOX" {% if game.platform == "XBOX" %}selected{% endif %}>XBOX</option>
+            <option value="mobile" {% if game.platform == "mobile" %}selected{% endif %}>Mobile</option>
+        </select>
 
         <label>Status</label>
         <select name="status">
@@ -20,8 +34,40 @@
             <option value="gespeeld" {% if game.status == "gespeeld" %}selected{% endif %}>Gespeeld</option>
         </select>
 
+        <label>Jouw rating</label>
+        <select name="user_rating">
+            <option value="">-- Geen rating --</option>
+            {% for i in range(1, 6) %}
+            <option value="{{ i }}" {% if game.user_rating == i %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+        </select>
+
         <button type="submit">Opslaan</button>
         <a href="{{ url_for('index') }}">Annuleren</a>
     </form>
 </div>
+
+<script>
+    const titleSelect = document.getElementById("titleSelect");
+    const genreSelect = document.getElementById("genreSelect");
+
+    titleSelect.addEventListener("change", async () => {
+        const name = titleSelect.value;
+        if (!name) {
+            genreSelect.innerHTML = '<option value="">-- Kies eerst een game --</option>';
+            return;
+        }
+
+        const res = await fetch(`/get_genres?name=${encodeURIComponent(name)}`);
+        const genres = await res.json();
+
+        if (genres.length === 0) {
+            genreSelect.innerHTML = '<option value="">Geen genre gevonden</option>';
+        } else {
+            genreSelect.innerHTML = genres.map(g =>
+                `<option value="${g}">${g}</option>`
+            ).join("");
+        }
+    });
+</script>
 {% endblock %}
