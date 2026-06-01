@@ -40,19 +40,28 @@
         {% if reviews %}
             {% for review in reviews %}
             <div class="review-card">
-                <div class="review-header">
-                    <span class="review-game">{{ review.game_title }}</span>
-                    <span class="review-rating">{{ review.rating }} / 5</span>
+                <div class="review-card-inner">
+                    {% if review.cover_url %}
+                        <img src="{{ review.cover_url }}" alt="{{ review.game_title }}" class="review-cover">
+                    {% else %}
+                        <div class="review-cover review-cover-placeholder">?</div>
+                    {% endif %}
+                    <div class="review-content">
+                        <div class="review-header">
+                            <span class="review-game">{{ review.game_title }}</span>
+                            <span class="review-rating">{{ review.rating }} / 5</span>
+                        </div>
+                        <div class="review-meta">
+                            door <strong>{{ review.username }}</strong> &middot; {{ review.datum }}
+                        </div>
+                        <p class="review-text">{{ review.review }}</p>
+                        {% if review.username == session.user %}
+                        <a href="{{ url_for('delete_review', review_id=review.id) }}"
+                           onclick="return confirm('Review verwijderen?')"
+                           class="review-delete">Verwijderen</a>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="review-meta">
-                    door <strong>{{ review.username }}</strong> &middot; {{ review.datum }}
-                </div>
-                <p class="review-text">{{ review.review }}</p>
-                {% if review.username == session.user %}
-                <a href="{{ url_for('delete_review', review_id=review.id) }}"
-                   onclick="return confirm('Review verwijderen?')"
-                   class="review-delete">Verwijderen</a>
-                {% endif %}
             </div>
             {% endfor %}
         {% else %}
