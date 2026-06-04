@@ -1,23 +1,47 @@
+{#
+   reviews.html – Openbare Reviews
+   =================================
+   Deze pagina is zichtbaar voor ALLE ingelogde gebruikers.
+   Links: formulier om een review te schrijven
+   Rechts: alle reviews van alle gebruikers (nieuwste eerst)
+   
+   Gamecovers worden automatisch opgehaald via de RAWG API (zie app.py).
+   
+   Variabelen die Flask meestuurt:
+     - reviews    : lijst van alle reviews (van alle gebruikers)
+     - alle_games : lijst van alle games voor het formulier
+     - admin      : True als de gebruiker een admin is
+#}
+
 {% extends "base.html" %}
 
 {% block content %}
 <h1>Reviews</h1>
+<p style="color:var(--gray); margin-bottom:20px;">
+    Reviews zijn openbaar zichtbaar voor alle gebruikers.
+</p>
 
+{# Tweekoloms-layout: formulier links, reviewlijst rechts #}
 <div class="reviews-layout">
 
-    <!-- Review schrijven -->
+    {# ── Linkerkolom: Review schrijven ── #}
     <div class="review-form-box">
         <h2>Review schrijven</h2>
+
+        {# Formulier stuurt data naar de /reviews/add route #}
         <form method="POST" action="{{ url_for('add_review') }}">
 
+            {# ── Gamekeuze ── #}
             <label>Game *</label>
             <select name="game_title" required>
                 <option value="">-- Kies een game --</option>
+                {# Loop over alle beschikbare games uit games.db #}
                 {% for game in alle_games %}
                     <option value="{{ game['name'] }}">{{ game['name'] }}</option>
                 {% endfor %}
             </select>
 
+            {# ── Rating (1–5) ── #}
             <label>Rating *</label>
             <select name="rating" required>
                 <option value="">-- Kies een rating --</option>
@@ -26,47 +50,72 @@
                 {% endfor %}
             </select>
 
+            {# ── Reviewtekst ── #}
             <label>Review *</label>
             <textarea name="review" rows="4" placeholder="Schrijf hier je review..." required></textarea>
 
+            {# ── Verstuurknop ── #}
             <button type="submit">Review plaatsen</button>
         </form>
     </div>
 
-    <!-- Reviews lezen -->
+    {# ── Rechterkolom: Alle reviews tonen ── #}
     <div class="reviews-list">
         <h2>Alle reviews</h2>
 
         {% if reviews %}
+            {# Loop over elke review (nieuwste eerst) #}
             {% for review in reviews %}
             <div class="review-card">
                 <div class="review-card-inner">
+
+                    {# ── Gamecover (via RAWG API) of placeholder ── #}
                     {% if review.cover_url %}
-                        <img src="{{ review.cover_url }}" alt="{{ review.game_title }}" class="review-cover">
+                        {# Cover gevonden: toon de afbeelding #}
+                        <img src="{{ review.cover_url }}"
+                             alt="{{ review.game_title }}"
+                             class="review-cover">
                     {% else %}
+                        {# Geen cover: toon een vraagteken als placeholder #}
                         <div class="review-cover review-cover-placeholder">?</div>
                     {% endif %}
+
+                    {# ── Reviewinhoud ── #}
                     <div class="review-content">
+
+                        {# Bovenste rij: gamtitel en rating #}
                         <div class="review-header">
                             <span class="review-game">{{ review.game_title }}</span>
                             <span class="review-rating">{{ review.rating }} / 5</span>
                         </div>
+
+                        {# Auteur en datum van de review #}
                         <div class="review-meta">
                             door <strong>{{ review.username }}</strong> &middot; {{ review.datum }}
                         </div>
+
+                        {# De reviewtekst zelf #}
                         <p class="review-text">{{ review.review }}</p>
+
+                        {# Verwijderknop: alleen zichtbaar voor de auteur van de review #}
                         {% if review.username == session.user %}
                         <a href="{{ url_for('delete_review', review_id=review.id) }}"
                            onclick="return confirm('Review verwijderen?')"
-                           class="review-delete">Verwijderen</a>
+                           class="review-delete">
+                            Verwijderen
+                        </a>
                         {% endif %}
+
                     </div>
                 </div>
             </div>
             {% endfor %}
+
         {% else %}
+            {# Geen reviews aanwezig #}
             <p style="color:var(--gray)">Nog geen reviews. Wees de eerste!</p>
         {% endif %}
+
     </div>
 
 </div>

@@ -1,29 +1,71 @@
+{#
+   base.html – Basissjabloon
+   ==========================
+   Alle andere pagina's erven van dit bestand via {% extends "base.html" %}.
+   Dit bestand bevat:
+     - De <head> met CSS en metagegevens
+     - De navigatiebalk (nav)
+     - Een plek voor flitsmeldingen (flash messages)
+     - Een {% block content %} waar elke pagina zijn eigen inhoud inzet
+
+   Flask-variabelen beschikbaar in elke template via session:
+     - session.user : de ingelogde gebruikersnaam (of leeg als niet ingelogd)
+#}
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Game Wishlist</title>
+    <title>Team Game database</title>
+
+    {# Laad Google Fonts voor het lettertype van de site #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@400;500&display=swap" rel="stylesheet">
+
+    {# Laad het CSS-bestand uit de static-map #}
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
+    {# ── Navigatiebalk ── #}
     <nav>
-        <a href="{{ url_for('index') }}" class="logo">Game Wishlist</a>
+        {# Logo / naam van de site – klik erop om naar de homepagina te gaan #}
+        <a href="{{ url_for('index') }}" class="logo">🎮 Game Wishlist</a>
+
         <div class="menu">
+            {# Toon deze links alleen als de gebruiker ingelogd is #}
             {% if session.user %}
+                {# Gebruikersnaam weergeven (niet klikbaar) #}
                 <span style="color:var(--gray); padding: 8px 4px;">{{ session.user }}</span>
-                <a href="{{ url_for('add_game') }}">+ Toevoegen</a>
+
+                {# Link naar de persoonlijke wishlist #}
+                <a href="{{ url_for('wishlist') }}">Mijn Wishlist</a>
+
+                {# Link naar de openbare reviews #}
                 <a href="{{ url_for('reviews') }}">Reviews</a>
+
+                {# Knop om een game toe te voegen aan de wishlist #}
+                <a href="{{ url_for('add_game') }}">+ Toevoegen</a>
+
+                {# Uitlogknop #}
                 <a href="{{ url_for('logout') }}">Uitloggen</a>
+
             {% else %}
+                {# Toon inlog- en registratielinks als niemand ingelogd is #}
                 <a href="{{ url_for('login') }}">Inloggen</a>
                 <a href="{{ url_for('register') }}">Registreren</a>
             {% endif %}
         </div>
     </nav>
 
+    {# ── Hoofdinhoud ── #}
     <main>
+
+        {# ── Flitsmeldingen (flash messages) ──
+           Flask stuurt berichten mee die hier worden getoond.
+           Categorieën: success (groen), danger (rood), info (blauw)
+        #}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -32,7 +74,11 @@
             {% endif %}
         {% endwith %}
 
+        {# ── Paginainhoud ──
+           Elke pagina vult dit blok in met zijn eigen HTML via {% block content %}
+        #}
         {% block content %}{% endblock %}
+
     </main>
 
 </body>

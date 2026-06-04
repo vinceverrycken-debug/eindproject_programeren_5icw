@@ -1,0 +1,93 @@
+{#
+   wishlist.html – Persoonlijke Wishlist
+   ======================================
+   Toont ALLEEN de games die de ingelogde gebruiker zelf heeft toegevoegd.
+   Andere gebruikers kunnen deze pagina niet zien.
+   
+   Variabelen die Flask meestuurt:
+     - games        : lijst van games (alleen van current_user)
+     - current_user : de ingelogde gebruikersnaam
+     - admin        : True als de gebruiker een admin is
+#}
+
+{% extends "base.html" %}
+
+{% block content %}
+
+{# ── Paginatitel ── #}
+<h1>Mijn Wishlist</h1>
+<p style="color:var(--gray); margin-bottom:20px;">
+    Alleen jij kan deze lijst zien. Voeg games toe, bewerk ze of verwijder ze.
+</p>
+
+{# ── Knop om een game toe te voegen ── #}
+<a href="{{ url_for('add_game') }}" class="add-btn">+ Game toevoegen</a>
+
+{# ── Tabel met games, of lege-staat boodschap ── #}
+{% if games %}
+    <table style="margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>Titel</th>
+                <th>Genre</th>
+                <th>Platform</th>
+                <th>Status</th>
+                <th>Rating</th>
+                <th>Acties</th>
+            </tr>
+        </thead>
+        <tbody>
+            {# Loop over elke game in de wishlist #}
+            {% for game in games %}
+            <tr>
+                {# Gamtitel #}
+                <td>{{ game.title }}</td>
+
+                {# Genre: toon streepje als er geen genre is #}
+                <td>{{ game.genre or "-" }}</td>
+
+                {# Platform: toon streepje als er geen platform is #}
+                <td>{{ game.platform or "-" }}</td>
+
+                {# Status badge met kleur afhankelijk van de waarde #}
+                <td>
+                    {% if game.status == "wil spelen" %}
+                        <span class="status status-wil">Wil spelen</span>
+                    {% elif game.status == "bezig" %}
+                        <span class="status status-bezig">Bezig</span>
+                    {% else %}
+                        <span class="status status-gespeeld">Gespeeld</span>
+                    {% endif %}
+                </td>
+
+                {# Persoonlijke rating van de gebruiker (1–5) #}
+                <td>
+                    {% if game.user_rating %}
+                        <span class="rating">{{ game.user_rating }} / 5</span>
+                    {% else %}
+                        <span style="color:var(--gray)">-</span>
+                    {% endif %}
+                </td>
+
+                {# Bewerkings- en verwijderlinks ── altijd zichtbaar want dit is jouw eigen lijst #}
+                <td>
+                    <a href="{{ url_for('edit_game', game_id=game.id) }}">Bewerken</a>
+                    <a href="{{ url_for('delete_game', game_id=game.id) }}"
+                       onclick="return confirm('Weet je zeker dat je deze game wil verwijderen?')">
+                        Verwijderen
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    {# Lege staat: gebruiker heeft nog geen games toegevoegd #}
+    <p style="margin-top:30px; color:var(--gray);">
+        Je hebt nog geen games toegevoegd.
+        <a href="{{ url_for('add_game') }}">Voeg je eerste game toe!</a>
+    </p>
+{% endif %}
+
+{% endblock %}

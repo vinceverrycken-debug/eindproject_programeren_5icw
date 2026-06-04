@@ -1,66 +1,111 @@
+{#
+   edit_game.html – Game bewerken
+   ================================
+   Formulier om een bestaande game in de wishlist te bewerken.
+   Werkt hetzelfde als add_game.html, maar de velden zijn al ingevuld
+   met de huidige waarden van de game.
+   
+   Variabelen die Flask meestuurt:
+     - game       : het game-object met de huidige waarden (game.title, game.platform, ...)
+     - alle_games : lijst van alle beschikbare games uit de referentiedatabase
+     - admin      : True als de gebruiker een admin is
+#}
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="form-container">
     <h2>Game bewerken</h2>
+
+    {# Formulier stuurt data terug naar dezelfde URL via POST #}
     <form method="POST">
+
+        {# ── Gamekeuze (vooraf ingevuld met huidige titel) ── #}
         <label>Titel *</label>
         <select name="title" id="titleSelect" required>
             <option value="">-- Kies een game --</option>
             {% for g in alle_games %}
-                <option value="{{ g['name'] }}" {% if g['name'] == game.title %}selected{% endif %}>{{ g['name'] }}</option>
+                {# 'selected' voegt het geselecteerde attribuut toe als de naam overeenkomt #}
+                <option value="{{ g['name'] }}" {% if g['name'] == game.title %}selected{% endif %}>
+                    {{ g['name'] }}
+                </option>
             {% endfor %}
         </select>
 
+        {# ── Genre (vooraf ingevuld met het huidige genre) ── #}
         <label>Genre</label>
+        {# 
+           Bij het laden van de pagina staat het huidige genre al als optie.
+           Als de gebruiker een andere game kiest, laadt JavaScript nieuwe genres.
+        #}
         <select name="genre" id="genreSelect">
             <option value="{{ game.genre }}">{{ game.genre or '-- Kies eerst een game --' }}</option>
         </select>
 
+        {# ── Platform (vooraf geselecteerd) ── #}
         <label>Platform</label>
         <select name="platform">
-            <option value="PS5" {% if game.platform == "PS5" %}selected{% endif %}>PS5</option>
-            <option value="PS4" {% if game.platform == "PS4" %}selected{% endif %}>PS4</option>
-            <option value="PC" {% if game.platform == "PC" %}selected{% endif %}>PC</option>
-            <option value="switch" {% if game.platform == "switch" %}selected{% endif %}>Switch</option>
-            <option value="XBOX" {% if game.platform == "XBOX" %}selected{% endif %}>XBOX</option>
-            <option value="mobile" {% if game.platform == "mobile" %}selected{% endif %}>Mobile</option>
+            {# 'selected' wordt toegevoegd als de waarde overeenkomt met het opgeslagen platform #}
+            <option value="PS5"    {% if game.platform == "PS5"    %}selected{% endif %}>PS5</option>
+            <option value="PS4"    {% if game.platform == "PS4"    %}selected{% endif %}>PS4</option>
+            <option value="PC"     {% if game.platform == "PC"     %}selected{% endif %}>PC</option>
+            <option value="Switch" {% if game.platform == "Switch" %}selected{% endif %}>Switch</option>
+            <option value="XBOX"   {% if game.platform == "XBOX"   %}selected{% endif %}>XBOX</option>
+            <option value="Mobile" {% if game.platform == "Mobile" %}selected{% endif %}>Mobile</option>
         </select>
 
+        {# ── Status (vooraf geselecteerd) ── #}
         <label>Status</label>
         <select name="status">
             <option value="wil spelen" {% if game.status == "wil spelen" %}selected{% endif %}>Wil spelen</option>
-            <option value="bezig" {% if game.status == "bezig" %}selected{% endif %}>Bezig</option>
-            <option value="gespeeld" {% if game.status == "gespeeld" %}selected{% endif %}>Gespeeld</option>
+            <option value="bezig"      {% if game.status == "bezig"      %}selected{% endif %}>Bezig</option>
+            <option value="gespeeld"   {% if game.status == "gespeeld"   %}selected{% endif %}>Gespeeld</option>
         </select>
 
-        <label>Jouw rating</label>
+        {# ── Persoonlijke rating (vooraf geselecteerd als er een is) ── #}
+        <label>Jouw rating (optioneel)</label>
         <select name="user_rating">
             <option value="">-- Geen rating --</option>
             {% for i in range(1, 6) %}
-            <option value="{{ i }}" {% if game.user_rating == i %}selected{% endif %}>{{ i }}</option>
+            {# Markeer de huidige rating als geselecteerd #}
+            <option value="{{ i }}" {% if game.user_rating == i %}selected{% endif %}>
+                {{ i }} / 5
+            </option>
             {% endfor %}
         </select>
 
-        <button type="submit">Opslaan</button>
-        <a href="{{ url_for('index') }}">Annuleren</a>
+        {# ── Knoppen ── #}
+        <button type="submit">Wijzigingen opslaan</button>
+        <a href="{{ url_for('wishlist') }}" style="display:block; text-align:center; margin-top:10px;">
+            Annuleren
+        </a>
     </form>
 </div>
 
+{#
+   JavaScript: Genre opnieuw laden bij gamekeuze
+   ================================================
+   Als de gebruiker een andere game kiest, worden de genres opnieuw opgehaald.
+   Zie add_game.html voor uitleg over hoe dit werkt.
+#}
 <script>
     const titleSelect = document.getElementById("titleSelect");
     const genreSelect = document.getElementById("genreSelect");
 
     titleSelect.addEventListener("change", async () => {
         const name = titleSelect.value;
+
+        // Reset als er geen game gekozen is
         if (!name) {
             genreSelect.innerHTML = '<option value="">-- Kies eerst een game --</option>';
             return;
         }
 
+        // Haal genres op via de API-route
         const res = await fetch(`/get_genres?name=${encodeURIComponent(name)}`);
         const genres = await res.json();
 
+        // Vul het genre-dropdown bij
         if (genres.length === 0) {
             genreSelect.innerHTML = '<option value="">Geen genre gevonden</option>';
         } else {
@@ -70,4 +115,5 @@
         }
     });
 </script>
+
 {% endblock %}

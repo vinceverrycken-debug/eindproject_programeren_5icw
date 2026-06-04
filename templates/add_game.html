@@ -1,32 +1,63 @@
+{#
+   add_game.html – Game toevoegen aan wishlist
+   =============================================
+   Formulier waarmee de gebruiker een game kan toevoegen aan zijn persoonlijke wishlist.
+   
+   Functionaliteit:
+     - Dropdown met alle beschikbare games (uit games.db)
+     - Bij het kiezen van een game wordt het genre automatisch geladen via JavaScript (AJAX)
+     - Gebruiker kiest platform, status en optionele persoonlijke rating
+   
+   Variabelen die Flask meestuurt:
+     - alle_games : lijst van games uit de referentiedatabase (games.db)
+     - admin      : True als de gebruiker een admin is
+#}
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="form-container">
     <h2>Game toevoegen</h2>
+
+    {# Het formulier stuurt data naar de /add route via POST #}
     <form method="POST">
+
+        {# ── Gamekeuze ── #}
         <label>Titel *</label>
+        {# 
+           id="titleSelect" wordt gebruikt door JavaScript om genres op te halen
+           wanneer de gebruiker een game kiest
+        #}
         <select name="title" id="titleSelect" required>
             <option value="">-- Kies een game --</option>
+            {# Loop over alle beschikbare games uit games.db #}
             {% for game in alle_games %}
                 <option value="{{ game['name'] }}">{{ game['name'] }}</option>
             {% endfor %}
         </select>
 
+        {# ── Genre (automatisch geladen via JavaScript) ── #}
         <label>Genre</label>
+        {#
+           id="genreSelect" wordt bijgewerkt door JavaScript
+           na het kiezen van een game in het dropdown hierboven
+        #}
         <select name="genre" id="genreSelect">
             <option value="">-- Kies eerst een game --</option>
         </select>
 
+        {# ── Platformkeuze ── #}
         <label>Platform</label>
         <select name="platform">
             <option value="PS5">PS5</option>
             <option value="PS4">PS4</option>
             <option value="PC">PC</option>
-            <option value="switch">Switch</option>
+            <option value="Switch">Switch</option>
             <option value="XBOX">XBOX</option>
-            <option value="mobile">Mobile</option>
+            <option value="Mobile">Mobile</option>
         </select>
 
+        {# ── Status van de game in de wishlist ── #}
         <label>Status</label>
         <select name="status">
             <option value="wil spelen">Wil spelen</option>
@@ -34,35 +65,55 @@
             <option value="gespeeld">Gespeeld</option>
         </select>
 
-        <label>Jouw rating</label>
+        {# ── Persoonlijke rating (optioneel, 1–5) ── #}
+        <label>Jouw rating (optioneel)</label>
         <select name="user_rating">
             <option value="">-- Geen rating --</option>
+            {# Genereer opties 1 tot en met 5 #}
             {% for i in range(1, 6) %}
-            <option value="{{ i }}">{{ i }}</option>
+            <option value="{{ i }}">{{ i }} / 5</option>
             {% endfor %}
         </select>
 
-        <button type="submit">Toevoegen</button>
-        <a href="{{ url_for('index') }}">Annuleren</a>
+        {# ── Knoppen ── #}
+        <button type="submit">Toevoegen aan wishlist</button>
+        <a href="{{ url_for('wishlist') }}" style="display:block; text-align:center; margin-top:10px;">
+            Annuleren
+        </a>
     </form>
 </div>
 
+{#
+   JavaScript: Genre automatisch laden
+   =====================================
+   Wanneer de gebruiker een game kiest in het dropdown-menu,
+   stuurt dit script een verzoek naar /get_genres?name=<gamename>.
+   De server geeft een lijst van genres terug in JSON-formaat.
+   Die genres worden dan als opties ingeladen in het genre-dropdown.
+#}
 <script>
+    // Haal de twee select-elementen op via hun ID
     const titleSelect = document.getElementById("titleSelect");
     const genreSelect = document.getElementById("genreSelect");
 
+    // Luister naar veranderingen in het gamekeuze-dropdown
     titleSelect.addEventListener("change", async () => {
         const name = titleSelect.value;
+
+        // Laadtekst tonen terwijl we wachten op de server
         genreSelect.innerHTML = '<option value="">Laden...</option>';
 
+        // Als er geen game gekozen is, reset het genre-dropdown
         if (!name) {
             genreSelect.innerHTML = '<option value="">-- Kies eerst een game --</option>';
             return;
         }
 
+        // Stuur een verzoek naar de Flask API-route /get_genres
         const res = await fetch(`/get_genres?name=${encodeURIComponent(name)}`);
-        const genres = await res.json();
+        const genres = await res.json(); // Verwerk het JSON-antwoord
 
+        // Vul het genre-dropdown met de ontvangen genres
         if (genres.length === 0) {
             genreSelect.innerHTML = '<option value="">Geen genre gevonden</option>';
         } else {
@@ -72,4 +123,5 @@
         }
     });
 </script>
+
 {% endblock %}

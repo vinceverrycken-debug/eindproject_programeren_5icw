@@ -1,57 +1,60 @@
+{# 
+   index.html – Startpagina / Homepagina
+   =====================================
+   Dit is de eerste pagina die de gebruiker ziet na het inloggen.
+   Het toont een welkomstboodschap en knoppen naar:
+     - De persoonlijke wishlist (alleen jouw games)
+     - De openbare reviews (voor iedereen zichtbaar)
+   
+   Variabelen die Flask meestuurt:
+     - current_user : de ingelogde gebruikersnaam
+     - admin        : True als de gebruiker een admin is
+#}
+
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Game Wishlist</h1>
 
-{% if games %}
-    <table>
-        <thead>
-            <tr>
-                <th>Titel</th>
-                <th>Genre</th>
-                <th>Platform</th>
-                <th>Status</th>
-                <th>Rating</th>
-                <th>Toegevoegd door</th>
-                <th>Acties</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for game in games %}
-            <tr>
-                <td>{{ game.title }}</td>
-                <td>{{ game.genre or "-" }}</td>
-                <td>{{ game.platform or "-" }}</td>
-                <td>
-                    {% if game.status == "wil spelen" %}
-                        <span class="status status-wil">Wil spelen</span>
-                    {% elif game.status == "bezig" %}
-                        <span class="status status-bezig">Bezig</span>
-                    {% else %}
-                        <span class="status status-gespeeld">Gespeeld</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if game.user_rating %}
-                        <span class="rating">{{ game.user_rating }} / 5</span>
-                    {% else %}
-                        <span style="color:var(--gray)">-</span>
-                    {% endif %}
-                </td>
-                <td>{{ game.added_by }}</td>
-                <td>
-                    {% if game.added_by == current_user %}
-                        <a href="{{ url_for('edit_game', game_id=game.id) }}">Bewerken</a>
-                        <a href="{{ url_for('delete_game', game_id=game.id) }}" onclick="return confirm('Zeker verwijderen?')">Verwijderen</a>
-                    {% else %}
-                        <span style="color:var(--gray); font-size:13px;">—</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>Nog geen games toegevoegd. <a href="{{ url_for('add_game') }}">Voeg er een toe!</a></p>
+{# ── Welkomstbanner ── #}
+<div class="home-hero">
+    <h1>Welkom, {{ current_user }}!</h1>
+    <p class="home-sub">
+        Dit is jouw persoonlijke game-overzicht. Beheer je wishlist of bekijk wat anderen schrijven over games.
+    </p>
+</div>
+
+{# ── Twee grote navigatiekaarten ── #}
+<div class="home-cards">
+
+    {# Kaart 1: Persoonlijke Wishlist #}
+    <a href="{{ url_for('wishlist') }}" class="home-card">
+        <div class="home-card-icon">🎮</div>
+        <h2>Mijn Wishlist</h2>
+        <p>
+            Bekijk en beheer jouw persoonlijke lijst van games.
+            Alleen jij kan jouw wishlist zien.
+        </p>
+        <span class="home-card-btn">Naar mijn wishlist →</span>
+    </a>
+
+    {# Kaart 2: Openbare Reviews #}
+    <a href="{{ url_for('reviews') }}" class="home-card">
+        <div class="home-card-icon">⭐</div>
+        <h2>Reviews</h2>
+        <p>
+            Lees reviews van alle gebruikers of schrijf zelf een review.
+            Reviews zijn zichtbaar voor iedereen.
+        </p>
+        <span class="home-card-btn">Naar reviews →</span>
+    </a>
+
+</div>
+
+{# ── Admin-knop (alleen zichtbaar voor admins) ── #}
+{% if admin %}
+<div style="text-align:center; margin-top: 30px;">
+    <a href="{{ url_for('admin') }}" class="admin-link">⚙️ Admin paneel</a>
+</div>
 {% endif %}
+
 {% endblock %}

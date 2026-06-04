@@ -1,64 +1,104 @@
-/* === Variables === */
+/*
+   style.css – Stijlbestand voor de Game Wishlist website
+   ========================================================
+   Structuur:
+     1. CSS-variabelen (kleuren, makkelijk aanpassen)
+     2. Reset (standaard marges/padding verwijderen)
+     3. Basis (body, links)
+     4. Navigatiebalk
+     5. Hoofdinhoud
+     6. Titels
+     7. Flitsmeldingen (alerts)
+     8. Formulieren (inputs, selects, knoppen)
+     9. Tabel (wishlist)
+    10. Status badges
+    11. Knop "game toevoegen"
+    12. Homepagina kaarten
+    13. Reviews
+    14. Gamecover afbeelding in reviews
+*/
+
+
+/* ═══════════════════════════════════════════════
+   1. CSS-VARIABELEN
+   Verander hier de kleuren om de hele site aan te passen
+   ═══════════════════════════════════════════════ */
 :root {
-    --bg:     #0d0f14;
-    --box:    #13161e;
-    --box2:   #1a1e2a;
-    --border: #2a2f45;
-    --text:   #d0d8f0;
-    --gray:   #6b7499;
-    --blue:   #00e5ff;
-    --green:  #00ffaa;
-    --red:    #ff4466;
+    --bg:     #0d0f14;   /* Achtergrondkleur van de pagina (zeer donker blauwgrijs) */
+    --box:    #13161e;   /* Kleur van kaarten en formulieren */
+    --box2:   #1a1e2a;   /* Iets lichtere kaartkleur (tabelkoptekst, inputs) */
+    --border: #2a2f45;   /* Randkleur voor elementen */
+    --text:   #d0d8f0;   /* Hoofdtekstkleur (lichtblauw wit) */
+    --gray:   #6b7499;   /* Grijze tekst voor minder belangrijke info */
+    --blue:   #00e5ff;   /* Accentkleur blauw (titels, links, knoppen) */
+    --green:  #00ffaa;   /* Groen voor 'bezig' status en ratings */
+    --red:    #ff4466;   /* Rood voor fouten en verwijderen */
 }
 
-/* === Reset === */
+
+/* ═══════════════════════════════════════════════
+   2. RESET
+   Verwijdert standaard browser-stijlen zodat alles consistent is
+   ═══════════════════════════════════════════════ */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Inclusief padding/border in de breedte */
 }
 
-/* === Base === */
+
+/* ═══════════════════════════════════════════════
+   3. BASIS
+   ═══════════════════════════════════════════════ */
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Exo 2', sans-serif;
+    font-family: 'Exo 2', sans-serif; /* Laad dit lettertype via Google Fonts in base.html */
 }
 
+/* Standaard linkstijl */
 a {
     color: var(--blue);
     text-decoration: none;
 }
 a:hover { text-decoration: underline; }
 
-/* === Nav === */
+
+/* ═══════════════════════════════════════════════
+   4. NAVIGATIEBALK
+   ═══════════════════════════════════════════════ */
 nav {
     height: 60px;
     background: var(--box);
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Logo links, menu rechts */
     padding: 0 20px;
 }
 
+/* Sitenaam/logo in de navigatiebalk */
 .logo {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     color: var(--blue);
+    font-weight: 700;
 }
 
+/* Container voor de navigatielinks rechts */
 .menu {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
 }
 
+/* Stijl voor elke navigatielink */
 .menu a {
-    padding: 8px 14px;
+    padding: 7px 13px;
     border: 1px solid var(--border);
     border-radius: 5px;
     color: var(--text);
+    font-size: 14px;
 }
 .menu a:hover {
     border-color: var(--blue);
@@ -66,31 +106,52 @@ nav {
     text-decoration: none;
 }
 
-/* === Main content === */
+
+/* ═══════════════════════════════════════════════
+   5. HOOFDINHOUD
+   ═══════════════════════════════════════════════ */
 main {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 20px;
+    max-width: 1100px;  /* Maximale breedte van de inhoud */
+    margin: 30px auto;  /* Gecentreerd op de pagina */
+    padding: 0 20px;
 }
 
+
+/* ═══════════════════════════════════════════════
+   6. TITELS
+   ═══════════════════════════════════════════════ */
 h1, h2 {
     font-family: 'Rajdhani', sans-serif;
     text-transform: uppercase;
     margin-bottom: 15px;
 }
-h1 { color: var(--blue); }
+h1 { color: var(--blue); font-size: 28px; }
+h2 { color: var(--text); font-size: 20px; }
 
-/* === Alerts === */
+
+/* ═══════════════════════════════════════════════
+   7. FLITSMELDINGEN (ALERTS)
+   Worden getoond na acties (toevoegen, verwijderen, fout)
+   ═══════════════════════════════════════════════ */
 .alert {
-    padding: 12px;
+    padding: 12px 16px;
     border-left: 4px solid;
     margin-bottom: 15px;
+    border-radius: 0 4px 4px 0;
 }
-.alert-success, .success { color: var(--green); border-color: var(--green); }
-.alert-danger,  .error   { color: var(--red);   border-color: var(--red);   }
-.alert-info,    .info    { color: var(--blue);  border-color: var(--blue);  }
+/* Succesmelding (groen) */
+.alert-success { color: var(--green); border-color: var(--green); background: rgba(0,255,170,0.05); }
+/* Foutmelding (rood) */
+.alert-danger  { color: var(--red);   border-color: var(--red);   background: rgba(255,68,102,0.05); }
+/* Informatiebericht (blauw) */
+.alert-info    { color: var(--blue);  border-color: var(--blue);  background: rgba(0,229,255,0.05); }
 
-/* === Form === */
+
+/* ═══════════════════════════════════════════════
+   8. FORMULIEREN
+   ═══════════════════════════════════════════════ */
+
+/* Wrapper voor het formulier (gecentreerde kaart) */
 .form-container {
     max-width: 450px;
     margin: auto;
@@ -100,12 +161,17 @@ h1 { color: var(--blue); }
     border-radius: 6px;
 }
 
+/* Label boven elk invoerveld */
 label {
     display: block;
     margin: 15px 0 5px;
     color: var(--gray);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
+/* Invoervelden, dropdowns en tekstgebieden */
 input, select, textarea {
     width: 100%;
     padding: 10px;
@@ -114,28 +180,37 @@ input, select, textarea {
     border-radius: 5px;
     color: var(--text);
     font-family: 'Exo 2', sans-serif;
+    font-size: 14px;
 }
+/* Blauwe rand bij focus (actief veld) */
 input:focus, select:focus, textarea:focus {
     border-color: var(--blue);
     outline: none;
 }
+/* Textarea kan verticaal vergroot worden */
 textarea { resize: vertical; }
 
+/* Primaire actieknop (submit) */
 button {
     width: 100%;
     margin-top: 20px;
     padding: 12px;
     background: var(--blue);
-    color: black;
+    color: #000;  /* Zwarte tekst op blauwe knop */
     border: none;
     border-radius: 5px;
     font-family: 'Rajdhani', sans-serif;
     font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
+    text-transform: uppercase;
 }
-button:hover { opacity: 0.8; }
+button:hover { opacity: 0.85; }
 
-/* === Table === */
+
+/* ═══════════════════════════════════════════════
+   9. TABEL (wishlist)
+   ═══════════════════════════════════════════════ */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -145,13 +220,14 @@ table {
     overflow: hidden;
 }
 
+/* Tabelkoptekstrij */
 thead { background: var(--box2); }
 
 th {
     padding: 14px 16px;
     text-align: left;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--gray);
@@ -159,6 +235,7 @@ th {
     white-space: nowrap;
 }
 
+/* Tabelcellen */
 td {
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
@@ -166,29 +243,13 @@ td {
     vertical-align: middle;
 }
 
+/* Geen rand onder de laatste rij */
 tbody tr:last-child td { border-bottom: none; }
+
+/* Lichte achtergrond bij hover over een rij */
 tbody tr:hover { background: var(--box2); }
 
-/* Status badge */
-.status {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-.status-wil      { background: rgba(0,229,255,0.1); color: var(--blue);  border: 1px solid var(--blue); }
-.status-bezig    { background: rgba(0,255,170,0.1); color: var(--green); border: 1px solid var(--green); }
-.status-gespeeld { background: rgba(107,116,153,0.1); color: var(--gray); border: 1px solid var(--gray); }
-
-/* Rating */
-.rating {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    color: var(--blue);
-}
-
-/* Actie links in tabel */
+/* Actielinks in de tabel (Bewerken / Verwijderen) */
 td a {
     display: inline-block;
     padding: 4px 10px;
@@ -199,32 +260,184 @@ td a {
     margin-right: 4px;
 }
 td a:hover { text-decoration: none; }
+/* Eerste link (Bewerken) wordt blauw bij hover */
 td a:first-child:hover { border-color: var(--blue); color: var(--blue); }
+/* Laatste link (Verwijderen) wordt rood bij hover */
 td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
 
-/* === Reviews === */
+
+/* ═══════════════════════════════════════════════
+   10. STATUS BADGES
+   Kleine gekleurde etiketten voor de status van een game
+   ═══════════════════════════════════════════════ */
+.status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+/* Blauw: Wil spelen */
+.status-wil      { background: rgba(0,229,255,0.1);   color: var(--blue);  border: 1px solid var(--blue); }
+/* Groen: Bezig */
+.status-bezig    { background: rgba(0,255,170,0.1);   color: var(--green); border: 1px solid var(--green); }
+/* Grijs: Gespeeld */
+.status-gespeeld { background: rgba(107,116,153,0.1); color: var(--gray);  border: 1px solid var(--gray); }
+
+/* Persoonlijke rating display (bijv. "4 / 5") */
+.rating {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: var(--blue);
+}
+
+
+/* ═══════════════════════════════════════════════
+   11. TOEVOEGEN-KNOP (boven de tabel)
+   ═══════════════════════════════════════════════ */
+.add-btn {
+    display: inline-block;
+    padding: 9px 18px;
+    background: var(--blue);
+    color: #000;
+    border-radius: 5px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+.add-btn:hover {
+    opacity: 0.85;
+    text-decoration: none;
+}
+
+
+/* ═══════════════════════════════════════════════
+   12. HOMEPAGINA KAARTEN
+   De twee grote knoppen op de startpagina
+   ═══════════════════════════════════════════════ */
+
+/* Hero-sectie bovenaan de homepagina */
+.home-hero {
+    text-align: center;
+    padding: 40px 20px 20px;
+}
+
+/* Subtitel onder de welkomstboodschap */
+.home-sub {
+    color: var(--gray);
+    font-size: 16px;
+    margin-top: 8px;
+    margin-bottom: 40px;
+}
+
+/* Container voor de twee kaarten naast elkaar */
+.home-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Twee gelijke kolommen */
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Individuele kaart (link) */
+.home-card {
+    display: block;
+    background: var(--box);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 36px 30px;
+    text-align: center;
+    color: var(--text);
+    transition: border-color 0.2s, transform 0.2s;
+}
+.home-card:hover {
+    border-color: var(--blue);
+    transform: translateY(-3px); /* Lichte zweefanimatie */
+    text-decoration: none;
+    color: var(--text);
+}
+
+/* Groot emoji-icoon bovenaan de kaart */
+.home-card-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* Beschrijvingstekst in de kaart */
+.home-card p {
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 8px;
+    margin-bottom: 20px;
+}
+
+/* "Naar ... →" knoptekst onderaan de kaart */
+.home-card-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    color: var(--blue);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* Admin-link onderaan de homepagina */
+.admin-link {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--gray);
+    font-size: 14px;
+}
+.admin-link:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    text-decoration: none;
+}
+
+/* Responsief: op kleine schermen komen kaarten onder elkaar */
+@media (max-width: 600px) {
+    .home-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════
+   13. REVIEWS
+   ═══════════════════════════════════════════════ */
+
+/* Tweekoloms-layout: formulier links, lijst rechts */
 .reviews-layout {
     display: grid;
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 360px 1fr;
     gap: 30px;
     align-items: start;
 }
 
+/* Het formulierblok aan de linkerkant (blijft zichtbaar bij scrollen) */
 .review-form-box {
     background: var(--box);
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 25px;
     position: sticky;
-    top: 20px;
+    top: 20px; /* Plakt aan de bovenkant bij scrollen */
 }
 
+/* Container voor de lijst van reviews */
 .reviews-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
+/* Individuele reviewkaart */
 .review-card {
     background: var(--box);
     border: 1px solid var(--border);
@@ -232,6 +445,7 @@ td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
     padding: 18px 20px;
 }
 
+/* Rij met gamtitel en rating */
 .review-header {
     display: flex;
     justify-content: space-between;
@@ -239,6 +453,7 @@ td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
     margin-bottom: 6px;
 }
 
+/* Gamtitel in de review */
 .review-game {
     font-family: 'Rajdhani', sans-serif;
     font-size: 18px;
@@ -246,6 +461,7 @@ td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
     text-transform: uppercase;
 }
 
+/* Ratingbadge (groen) */
 .review-rating {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -257,18 +473,21 @@ td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
     border-radius: 20px;
 }
 
+/* Auteur en datum */
 .review-meta {
     font-size: 12px;
     color: var(--gray);
     margin-bottom: 10px;
 }
 
+/* De reviewtekst */
 .review-text {
     font-size: 14px;
     line-height: 1.6;
     color: var(--text);
 }
 
+/* Verwijderknop voor de auteur */
 .review-delete {
     display: inline-block;
     margin-top: 10px;
@@ -283,22 +502,29 @@ td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
     text-decoration: none;
 }
 
-/* === Review cover === */
+
+/* ═══════════════════════════════════════════════
+   14. GAMECOVER AFBEELDING (in reviews)
+   ═══════════════════════════════════════════════ */
+
+/* Binnenste flex-container: cover links, tekst rechts */
 .review-card-inner {
     display: flex;
     gap: 16px;
     align-items: flex-start;
 }
 
+/* De gamecover afbeelding */
 .review-cover {
     width: 90px;
     height: 120px;
-    object-fit: cover;
+    object-fit: cover;   /* Vult het vak zonder uitrekken */
     border-radius: 4px;
     border: 1px solid var(--border);
-    flex-shrink: 0;
+    flex-shrink: 0;       /* Mag niet kleiner worden */
 }
 
+/* Placeholder als er geen cover is (vraagteken) */
 .review-cover-placeholder {
     width: 90px;
     height: 120px;
@@ -313,6 +539,7 @@ td a:last-child:hover  { border-color: var(--red);  color: var(--red); }
     flex-shrink: 0;
 }
 
+/* De tekstinhoud naast de cover */
 .review-content {
-    flex: 1;
+    flex: 1; /* Neemt alle resterende ruimte in */
 }

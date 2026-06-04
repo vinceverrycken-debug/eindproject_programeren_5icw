@@ -1,17 +1,39 @@
+{#
+   register.html – Registratiepagina
+   ====================================
+   Toont een formulier om een nieuw account aan te maken.
+   Na succesvolle registratie wordt de gebruiker doorgestuurd naar de loginpagina.
+   
+   Geen extra variabelen nodig van Flask.
+#}
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="form-container">
     <h2>Registreren</h2>
+
+    {# Formulier stuurt data naar /register via POST #}
     <form method="POST">
-        <label>user name</label>
-        <input type="text" name="username" required>
 
-        <label>geheime code</label>
-        <input type="password" name="password" required>
+        {# ── Gebruikersnaamveld ── #}
+        <label>Gebruikersnaam</label>
+        <input type="text" name="username" required placeholder="Kies een gebruikersnaam">
 
+        {# ── Wachtwoordveld ──
+           Let op: wachtwoorden worden momenteel niet gehashed opgeslagen.
+           Voor een veiligere versie, gebruik werkzeug.security.generate_password_hash.
+        #}
+        <label>Wachtwoord</label>
+        <input type="password" name="password" required placeholder="Kies een wachtwoord">
+
+        {# ── Registratieknop ── #}
         <button type="submit">Account aanmaken</button>
     </form>
-    <p>Al een account? <a href="{{ url_for('login') }}">Log hier in</a></p>
+
+    {# Link naar de loginpagina voor bestaande gebruikers #}
+    <p style="margin-top:15px; text-align:center;">
+        Al een account? <a href="{{ url_for('login') }}">Log hier in</a>
+    </p>
 </div>
 {% endblock %}

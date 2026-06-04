@@ -1,55 +1,100 @@
+"""
+games.py – Referentiedatabase aanmaken
+========================================
+Dit script maakt een aparte database aan (games.db) met 100 bekende games,
+inclusief genres, ratings en platforms. Dit is de REFERENTIEDATABASE:
+  - De wishlist-app (app.py) leest hieruit om gamekeuzes aan te bieden
+  - Gebruikers voegen games toe aan hun eigen wishlist (wishlist.db)
+  - Dit script hoef je maar één keer uit te voeren
+
+Tabellen in games.db:
+  - game          : de 100 beschikbare games (id, name)
+  - platform      : beschikbare platforms (id, name)
+  - genre         : genres per game (game_id, genre)
+  - rating        : score en stemmen per game (game_id, rating, votes)
+  - game_platform : koppeltabel game ↔ platform (many-to-many)
+
+Gebruik:
+  python games.py
+"""
+
 import sqlite3
 import random
 
-# Database aanmaken
+# ──────────────────────────────────────────────
+# Database aanmaken / verbinding openen
+# ──────────────────────────────────────────────
+
+# Maak verbinding met games.db (wordt aangemaakt als het nog niet bestaat)
 conn = sqlite3.connect("/home/claude/games.db")
 cur = conn.cursor()
 
+
+# ──────────────────────────────────────────────
 # Tabellen aanmaken
+# ──────────────────────────────────────────────
+
 cur.executescript("""
+-- Hoofdtabel voor games
 CREATE TABLE IF NOT EXISTS game (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id   INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
 );
 
+-- Platformtabel (bijv. PC, PS5, Switch)
 CREATE TABLE IF NOT EXISTS platform (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id   INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
 );
 
+-- Genres per game (een game kan meerdere genres hebben)
 CREATE TABLE IF NOT EXISTS genre (
     game_id INTEGER NOT NULL,
-    genre TEXT NOT NULL,
+    genre   TEXT NOT NULL,
     FOREIGN KEY (game_id) REFERENCES game(id)
 );
 
+-- Rating en aantal stemmen per game
 CREATE TABLE IF NOT EXISTS rating (
     game_id INTEGER NOT NULL,
-    rating REAL NOT NULL,
-    votes INTEGER NOT NULL,
+    rating  REAL NOT NULL,      -- bijv. 8.5
+    votes   INTEGER NOT NULL,   -- aantal stemmen
     FOREIGN KEY (game_id) REFERENCES game(id)
 );
 
--- Koppeltabel game <-> platform (many-to-many)
+-- Koppeltabel: welke game is beschikbaar op welk platform (many-to-many)
+-- Een game kan op meerdere platforms staan, een platform heeft meerdere games
 CREATE TABLE IF NOT EXISTS game_platform (
-    game_id INTEGER NOT NULL,
+    game_id     INTEGER NOT NULL,
     platform_id INTEGER NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(id),
+    FOREIGN KEY (game_id)     REFERENCES game(id),
     FOREIGN KEY (platform_id) REFERENCES platform(id)
 );
-    
 """)
 
-# Platforms invoegen
-platforms = ["PC", "PlayStation 5", "PlayStation 4", "Xbox Series X", "Xbox One",
-             "Nintendo Switch", "Mobile", "PlayStation 3", "Xbox 360", "Wii U"]
 
+# ──────────────────────────────────────────────
+# Platforms invoegen
+# ──────────────────────────────────────────────
+
+# Lijst van alle beschikbare platforms
+platforms = [
+    "PC", "PlayStation 5", "PlayStation 4", "Xbox Series X", "Xbox One",
+    "Nintendo Switch", "Mobile", "PlayStation 3", "Xbox 360", "Wii U"
+]
+
+# Voeg elk platform in als een rij
 for p in platforms:
     cur.execute("INSERT INTO platform (name) VALUES (?)", (p,))
 
 conn.commit()
 
-# 100 games
+
+# ──────────────────────────────────────────────
+# Games invoegen (100 stuks)
+# ──────────────────────────────────────────────
+
+# Lijst van 100 bekende games
 games = [
     "The Legend of Zelda: Breath of the Wild", "Red Dead Redemption 2", "The Witcher 3: Wild Hunt",
     "God of War", "Grand Theft Auto V", "Minecraft", "Dark Souls III", "Elden Ring",
@@ -80,32 +125,53 @@ games = [
     "Age of Empires IV", "Civilization VI"
 ]
 
-genres_pool = ["Action", "RPG", "Shooter", "Adventure", "Strategy", "Simulation",
-               "Horror", "Platformer", "Fighting", "Racing", "Sports", "Puzzle",
-               "Survival", "Indie", "Open World", "Stealth", "Roguelite", "MMORPG"]
+# Alle mogelijke genres waaruit willekeurig gekozen wordt
+genres_pool = [
+    "Action", "RPG", "Shooter", "Adventure", "Strategy", "Simulation",
+    "Horror", "Platformer", "Fighting", "Racing", "Sports", "Puzzle",
+    "Survival", "Indie", "Open World", "Stealth", "Roguelite", "MMORPG"
+]
 
+# Lijst van platform-ID's (1 t/m aantal platforms)
 platform_ids = list(range(1, len(platforms) + 1))
 
+
+# ──────────────────────────────────────────────
+# Elke game invullen met genres, rating en platforms
+# ──────────────────────────────────────────────
+
 for i, game_name in enumerate(games, start=1):
+    # Voeg de game in en haal het automatisch gegenereerde ID op
     cur.execute("INSERT INTO game (name) VALUES (?)", (game_name,))
     game_id = cur.lastrowid
 
-    # 1-3 genres per game
+    # Kies willekeurig 1 tot 3 genres voor deze game
     chosen_genres = random.sample(genres_pool, random.randint(1, 3))
     for g in chosen_genres:
-        cur.execute("INSERT INTO genre (game_id, genre) VALUES (?, ?)", (game_id, g))
+        cur.execute(
+            "INSERT INTO genre (game_id, genre) VALUES (?, ?)",
+            (game_id, g)
+        )
 
-    # rating tussen 5.0 en 10.0, votes tussen 1000 en 500000
+    # Genereer een willekeurige rating (5.0–10.0) en aantal stemmen (1000–500000)
     rating = round(random.uniform(5.0, 10.0), 1)
     votes = random.randint(1000, 500000)
-    cur.execute("INSERT INTO rating (game_id, rating, votes) VALUES (?, ?, ?)", (game_id, rating, votes))
+    cur.execute(
+        "INSERT INTO rating (game_id, rating, votes) VALUES (?, ?, ?)",
+        (game_id, rating, votes)
+    )
 
-    # 1-4 platforms per game
+    # Koppel de game aan 1 tot 4 willekeurige platforms
     chosen_platforms = random.sample(platform_ids, random.randint(1, 4))
     for pid in chosen_platforms:
-        cur.execute("INSERT INTO game_platform (game_id, platform_id) VALUES (?, ?)", (game_id, pid))
+        cur.execute(
+            "INSERT INTO game_platform (game_id, platform_id) VALUES (?, ?)",
+            (game_id, pid)
+        )
 
+# Sla alle wijzigingen op en sluit de verbinding
 conn.commit()
 conn.close()
+
 print("Database aangemaakt: games.db")
-print(f"100 games ingevoerd met genres, ratings en platforms!")
+print("100 games ingevoerd met genres, ratings en platforms!")

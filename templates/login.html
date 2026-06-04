@@ -1,16 +1,37 @@
+{#
+   login.html – Inlogpagina
+   ==========================
+   Toont een formulier voor gebruikersnaam en wachtwoord.
+   Bij succes wordt de gebruiker doorgestuurd naar de homepagina.
+   Bij fout verschijnt een foutmelding (flash message).
+   
+   Geen extra variabelen nodig van Flask.
+#}
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="form-container">
     <h2>Inloggen</h2>
+
+    {# Formulier stuurt data naar dezelfde URL (/login) via POST #}
     <form method="POST">
-        <label>user name</label>
-        <input type="text" name="username" required>
 
-        <label>geheime code</label>
-        <input type="password" name="password" required>
+        {# ── Gebruikersnaamveld ── #}
+        <label>Gebruikersnaam</label>
+        <input type="text" name="username" required placeholder="Jouw gebruikersnaam">
 
+        {# ── Wachtwoordveld (verborgen invoer) ── #}
+        <label>Wachtwoord</label>
+        <input type="password" name="password" required placeholder="Jouw wachtwoord">
+
+        {# ── Inlogknop ── #}
         <button type="submit">Inloggen</button>
-    </form><p>Nog geen account? <a href="{{ url_for('register') }}">Registreer hier</a></p>
+    </form>
+
+    {# Link naar de registratiepagina voor nieuwe gebruikers #}
+    <p style="margin-top:15px; text-align:center;">
+        Nog geen account? <a href="{{ url_for('register') }}">Registreer hier</a>
+    </p>
 </div>
 {% endblock %}
