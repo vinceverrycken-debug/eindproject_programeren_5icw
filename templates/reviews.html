@@ -97,8 +97,8 @@
                         {# De reviewtekst zelf #}
                         <p class="review-text">{{ review.review }}</p>
 
-                        {# Verwijderknop: alleen zichtbaar voor de auteur van de review #}
-                        {% if review.username == session.user %}
+                        {# Verwijderknop: zichtbaar voor de auteur of een admin #}
+                        {% if review.username == session.user or admin %}
                         <a href="{{ url_for('delete_review', review_id=review.id) }}"
                            onclick="return confirm('Review verwijderen?')"
                            class="review-delete">

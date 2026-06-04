@@ -678,6 +678,41 @@ def toggle_admin(user_id):
 # Opstarten
 # ──────────────────────────────────────────────
 
+# ──────────────────────────────────────────────
+# Route: Admin account aanmaken (eenmalige setup)
+# ──────────────────────────────────────────────
+
+@app.route("/setup_admin")
+def setup_admin():
+    """
+    Maakt automatisch een admin account aan als het nog niet bestaat.
+    Gebruikersnaam: admin
+    Wachtwoord:     admin123
+
+    Verwijder of beveilig deze route nadat je bent ingelogd!
+    Ga naar: http://localhost:5000/setup_admin
+    """
+    conn = get_db()
+    bestaand = conn.execute(
+        "SELECT * FROM users WHERE username = 'admin'"
+    ).fetchone()
+
+    if bestaand:
+        # Account bestaat al → zet is_admin op 1
+        conn.execute("UPDATE users SET is_admin = 1 WHERE username = 'admin'")
+        conn.commit()
+        conn.close()
+        return "<h2>Admin account bestaat al en heeft nu adminrechten. <a href='/login'>Inloggen</a></h2>"
+
+    # Nieuw admin account aanmaken
+    conn.execute(
+        "INSERT INTO users (username, password, is_admin) VALUES ('admin', 'admin123', 1)"
+    )
+    conn.commit()
+    conn.close()
+    return "<h2>Admin account aangemaakt! Gebruiker: <b>admin</b> | Wachtwoord: <b>admin123</b>. <a href='/login'>Inloggen</a></h2>"
+
+
 if __name__ == "__main__":
     # Initialiseer de database bij het opstarten
     init_db()
