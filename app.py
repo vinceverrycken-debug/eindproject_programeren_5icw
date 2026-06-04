@@ -185,18 +185,17 @@ def index():
 @app.route("/wishlist")
 def wishlist():
     """
-    Toont de persoonlijke wishlist van de ingelogde gebruiker.
-    ALLEEN de games die door deze gebruiker zijn toegevoegd worden getoond.
-    Andere gebruikers kunnen jouw wishlist NIET zien.
+    Toont de publieke wishlist met games van ALLE gebruikers.
+    Iedereen kan alle toegevoegde games zien.
+    Bewerken/verwijderen kan alleen door de eigenaar of een admin.
     """
     if "user" not in session:
         return redirect(url_for("login"))
 
     conn = get_db()
-    # Filter op added_by = huidige gebruiker → privé wishlist
+    # Geen filter op added_by → alle games van alle gebruikers
     games = conn.execute(
-        "SELECT * FROM games WHERE added_by = ? ORDER BY title",
-        (session["user"],)
+        "SELECT * FROM games ORDER BY title"
     ).fetchall()
     conn.close()
 
